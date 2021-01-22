@@ -2,6 +2,8 @@ import './App.css';
 import IndoorTemp from './components/indoorTemp';
 
 function App() {
+
+  
   return (
     <div className="App">
       <div className="boxes-container"> 
