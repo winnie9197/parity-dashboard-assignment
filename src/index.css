@@ -1,3 +1,21 @@
+:root {
+  --background: #FDF8F5;
+  --highlight: #FF4E4E;
+  --primary: #F7EDC6;
+  --primary-green: #164A41;
+  --shadow-green:#08342D;
+  --secondary-green: #8DA242;
+  --shadow: #c7c2c229;
+}
+
+body > #root > div {
+  height: 100vh;
+}
+
+html {
+  overflow: hidden;
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -5,9 +23,58 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  color: #505050;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  margin-bottom: 0;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.container-center {
+  margin: auto;
+  text-align: center;
+}
+
+.sub-text {
+  color: #BCBCBC;
+}
+
+h1 {
+  text-align: center;
+  font-size: 4em;
+  font-weight: 400;
+}
+
+/* Boxes Layout */
+.boxes-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr 1fr;
+  height: 100%;
+}
+
+.boxes {
+  border: 1px solid #BCBCBC;
+  text-align: center;
+  position: relative;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.filler {
+  background-color: #16bcc8;
+}
+
+/* Indoor Temp */
+.startTemp {
+  margin-top: 0;
+}
+
+
