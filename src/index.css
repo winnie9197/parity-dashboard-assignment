@@ -1,11 +1,7 @@
 :root {
-  --background: #FDF8F5;
-  --highlight: #FF4E4E;
-  --primary: #F7EDC6;
-  --primary-green: #164A41;
-  --shadow-green:#08342D;
-  --secondary-green: #8DA242;
-  --shadow: #c7c2c229;
+  --primary: #16bcc8;
+  --minimal: #BCBCBC;
+  --light: #EEEEEE;
 }
 
 body > #root > div {
@@ -24,6 +20,23 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #505050;
+  background-color: var(--light);
+}
+
+button, input[type="submit"], input[type="reset"] {
+	background: none;
+	color: inherit;
+	border: none;
+	padding: 0;
+	font: inherit;
+	cursor: pointer;
+	outline: inherit;
+}
+
+button {
+  text-align: center;
+  font-size: 1em;
+  font-weight: 300;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -41,7 +54,7 @@ code {
 }
 
 .sub-text {
-  color: #BCBCBC;
+  color: var(--minimal);
 }
 
 h1 {
@@ -62,6 +75,12 @@ h3 {
   font-weight: 300;
 }
 
+h4 {
+  text-align: center;
+  font-size: 1em;
+  font-weight: 300;
+}
+
 
 /* Boxes Layout */
 .boxes-container {
@@ -72,9 +91,11 @@ h3 {
 }
 
 .boxes {
-  border: 1px solid #EEEEEE;
+  border: 2px solid var(--light);
   text-align: center;
   position: relative;
+  border-radius: 4px;
+  background-color: white;
 
   display: flex;
   justify-content: center;
@@ -82,7 +103,7 @@ h3 {
 }
 
 .filler {
-  background-color: #16bcc8;
+  background-color: var(--primary);
 }
 
 /* Indoor Temp */
@@ -90,8 +111,17 @@ h3 {
   margin-top: 0;
 }
 
+.square {
+  padding: 11px 8px;
+  border: 1px solid var(--minimal);
+}
+
 /* Humidity */
 .humidity {
-  color: #BCBCBC;
+  color: var(--minimal);
+}
+
+/* Thermostat Switches */
+.switches {
 }
 

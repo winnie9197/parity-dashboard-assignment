@@ -80,8 +80,8 @@ function IndoorTemp ({ sensor }) {
             <div className="indoorTemp">
                 <h1 className="startTemp">{startTemp}{sensor!==undefined ? sensor.display_symbol : "°C"}</h1>
                 <div>
-                    <button onClick={handleIncrement}>+0.5</button>
-                    <button onClick={handleDecrement}>-0.5</button>
+                    <button className="square" onClick={handleIncrement}>+<sub>0.5</sub></button>
+                    <button className="square" onClick={handleDecrement}>-<sub>0.5</sub></button>
                 </div>
                 <h5 className="sub-text">INDOOR TEMPERTURE</h5>
             </div>
