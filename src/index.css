@@ -2,6 +2,8 @@
   --primary: #16bcc8;
   --minimal: #BCBCBC;
   --light: #EEEEEE;
+
+  --classic: #505050;
 }
 
 body > #root > div {
@@ -20,7 +22,6 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #505050;
-  background-color: var(--light);
 }
 
 button, input[type="submit"], input[type="reset"] {
@@ -41,6 +42,8 @@ button {
 
 h1, h2, h3, h4, h5, h6 {
   margin-bottom: 0;
+  margin-top: 0;
+  text-align: left;
 }
 
 code {
@@ -50,70 +53,112 @@ code {
 
 .container-center {
   margin: auto;
-  text-align: center;
-}
-
-.sub-text {
-  color: var(--minimal);
 }
 
 h1 {
-  text-align: center;
   font-size: 4em;
   font-weight: 400;
 }
 
 h2 {
-  text-align: center;
   font-size: 3em;
   font-weight: 300;
 }
 
 h3 {
-  text-align: center;
   font-size: 2em;
   font-weight: 300;
 }
 
 h4 {
-  text-align: center;
-  font-size: 1em;
+  font-size: 1.25em;
   font-weight: 300;
 }
 
-
-/* Boxes Layout */
-.boxes-container {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: 1fr 1fr 1fr;
-  height: 100%;
+h5 {
+  font-weight: 300;
 }
 
-.boxes {
-  border: 2px solid var(--light);
-  text-align: center;
-  position: relative;
-  border-radius: 4px;
-  background-color: white;
-
-  display: flex;
+/* App Layout */
+.app-container {
+  /* display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: center; */
+
+  position: relative
 }
 
-.filler {
-  background-color: var(--primary);
+.main-container {
+  display: flex;
+  flex-direction: column;
+
+  position: absolute;
+  top: 45%;
+  left: 50%;
+  -moz-transform: translateX(-50%) translateY(-55%);
+  -webkit-transform: translateX(-50%) translateY(-55%);
+  transform: translateX(-55%) translateY(-55%);
+}
+
+.main-heading {
+  margin: 0 auto;
+}
+
+/* Main Layout */
+.temp-container {
+  display: grid;
+  grid-template: "title status"
+                 "temp"
+                 "buttons";
+  justify-content: center;
+  margin-top: 2em;  
 }
 
 /* Indoor Temp */
-.startTemp {
-  margin-top: 0;
+.title {
+  color: var(--minimal);
+  grid-area: title;
+  display: inline;
+}
+
+.status {
+  padding-left: 3em;
+  grid-area: status;
+  display: inline;
+}
+
+.indoor-temp {
+  margin-top: 1.25em;
+  display: flex;
+  flex-direction: row;
+  text-align: left;
+  grid-area: temp;
+}
+
+.indoor-temp > * {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.start-temp {
+  margin: 11px 0;
+  color: var(--classic);
 }
 
 .square {
-  padding: 11px 8px;
-  border: 1px solid var(--minimal);
+  padding-left: 8px;
+  font-size: 2em;
+  color: var(--minimal);
+}
+
+.square sub {
+  font-size: .5em;
+}
+
+.temp-buttons {
+  display: flex;
+  flex-direction: column;
+  padding-left: 1em;
 }
 
 /* Humidity */
@@ -123,5 +168,14 @@ h4 {
 
 /* Thermostat Switches */
 .switches {
+  margin-top: 1.25em;
+  grid-area: buttons;
+}
+.switches > *:not(:first-child) {
+  padding-left: 2em;
+} 
+
+.inline-switches {
+  display: inline-block;
 }
 

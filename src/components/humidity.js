@@ -59,7 +59,6 @@ function Humidity ({ sensor, sensorType }) {
     return (
         <div className="container-center">
             <div className="humidity">
-                
                 <h3 className="startTemp">{startHumidity}{sensor!==undefined ? sensor.display_symbol : "%"}</h3>
                 <h5 className="sub-text">{sensorType}</h5>
             </div>

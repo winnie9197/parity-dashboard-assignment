@@ -77,14 +77,18 @@ function IndoorTemp ({ sensor }) {
 
     return (
         <div className="container-center">
-            <div className="indoorTemp">
-                <h1 className="startTemp">{startTemp}{sensor!==undefined ? sensor.display_symbol : "°C"}</h1>
-                <div>
+            <h4 className="title">Indoor Temperature</h4>
+            <h5 className="status">{}STATUS</h5>
+            <div className="indoor-temp">
+                <h1 className="start-temp">{startTemp}{sensor!==undefined ? sensor.display_symbol : "°C"}</h1>
+                <div className="temp-buttons">
                     <button className="square" onClick={handleIncrement}>+<sub>0.5</sub></button>
                     <button className="square" onClick={handleDecrement}>-<sub>0.5</sub></button>
                 </div>
-                <h5 className="sub-text">INDOOR TEMPERTURE</h5>
+                
             </div>
+
+
         </div>
     );
 };

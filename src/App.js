@@ -54,20 +54,13 @@ function App() {
   }, []);
   
   return (
-    <div className="App">
-      <div className="boxes-container"> 
-          <div className="boxes"></div>
-          <div className="boxes filler"></div>
-          <div className="boxes"></div>
-          {/* <div className="boxes"><Humidity sensor={humiditySensor} sensorType={"HUMIDITY"}/></div> */}
-          <div className="boxes"></div>
-          {/* <div className="boxes"><h4>{thermostatStatus.toUpperCase()}</h4></div> */}
-          <div className="boxes"><IndoorTemp sensor={temperatureSensor}/></div>
-          {/* <div className="boxes"><Humidity sensor={outdoorSensor} sensorType={"OUTDOOR"}/></div>   */}
-          <div className="boxes"></div>
-          <div className="boxes"></div>
-          <div className="boxes"><ThermostatSwitch /></div>
-          <div className="boxes filler"></div>  
+    <div className="App app-container">
+      <div className="main-container">
+        <h2 className="main-heading">Unit #100</h2>
+        <div className="temp-container"> 
+            <IndoorTemp sensor={temperatureSensor}/>
+            <ThermostatSwitch />
+        </div>
       </div>
     </div>
   );

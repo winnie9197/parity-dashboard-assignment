@@ -39,6 +39,10 @@ function ThermostatSwitch () {
 
     const handleHeat = async () => {
         //persist changes
+
+        // if heat turns on, auto turns off
+        // if heat turns off, if auto is on then let auto function handle it
+        // if auto is off then turn thermostat off
         // await changeStatus('heat');
 
         //change component states
@@ -183,11 +187,9 @@ function ThermostatSwitch () {
     return (
         <div className="container-center">
             <div className="switches">
-                
                 <button onClick={() => handleSwitch("thermostat")}>{thermostatON ? <h4>OFF</h4> : <h4>ON</h4> }</button>
-
                 <button onClick={() => handleSwitch("auto")}>{renderAuto()}</button>
-                <div>
+                <div className="inline-switches">
                     <button onClick={() => handleSwitch("heat")}>{renderHeat()}</button>/
                     <button onClick={() => handleSwitch("cool")}>{renderCool()}</button>
                 </div>
