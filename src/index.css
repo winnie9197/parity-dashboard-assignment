@@ -6,11 +6,8 @@
   --secondary: #FF8E2E;
 }
 
-body > #root > div {
-  height: 100vh;
-}
-
-html {
+html { 
+  height: 100%;
   overflow: hidden;
 }
 
@@ -21,7 +18,9 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: #505050;
+  color: var(--minimal);
+  height: 100%;
+  overflow: scroll;
 }
 
 button, input[type="submit"], input[type="reset"] {
@@ -79,29 +78,31 @@ h5 {
   font-weight: 300;
 }
 
+.row {
+  width: 100%;
+  margin: 0 auto;
+  padding: 0 1em;
+  display: grid;
+  grid-auto-flow: column;
+  grid-gap: 4em;  
+  grid-template-rows: 1fr;
+}
+
 /* App Layout */
 .app-container {
-  /* display: flex;
-  justify-content: center;
-  align-items: center; */
-
-  position: relative
+  display: flex;
+  flex-direction: column;
+  margin: 4em;
+  margin-left: 15%;
 }
 
 .main-container {
   display: flex;
   flex-direction: column;
-
-  position: absolute;
-  top: 45%;
-  left: 50%;
-  -moz-transform: translateX(-50%) translateY(-55%);
-  -webkit-transform: translateX(-50%) translateY(-55%);
-  transform: translateX(-55%) translateY(-55%);
 }
 
 .main-heading {
-  margin: 0 auto;
+  width: 308px;
   color: var(--minimal);
 }
 
@@ -166,6 +167,18 @@ h5 {
 /* Humidity */
 .humidity {
   color: var(--minimal);
+  display: grid;
+  grid-auto-flow: column;
+  grid-gap: 4%;
+  justify-content: start;
+  align-self: center;
+
+  line-height: 3em;
+  text-align: center;
+}
+
+.sub-text {
+  font-weight: 400;
 }
 
 /* Thermostat Switches */
@@ -174,6 +187,7 @@ h5 {
   grid-area: buttons;
   color: var(--minimal);
 }
+
 .switches > *:not(:first-child) {
   padding-left: 2em;
 } 
@@ -182,3 +196,71 @@ h5 {
   display: inline-block;
 }
 
+/* Bar Chart */
+.barchart-container {
+  width: 75%;
+  margin-top: 8em;
+  padding: 4em 0;
+  border-radius: 8px;
+  box-shadow: 0 0 12px var(--light);
+}
+
+.barchart {
+  max-width: 80%;
+  margin: 0 auto;
+}
+
+/* Secondary Stats */
+.secondary-stats{
+  margin-top: auto;
+}
+
+.secondary-stats > * {
+  padding-left: 10%;
+}
+
+.stats-display {
+  padding: 1em 0;
+  padding-left: 10%;
+  border-left: 1px solid var(--primary);
+}
+
+.stats-display > * {
+  padding: 1em 0;
+}
+
+/* Side Nav Dummy */
+.sidenav {
+  height: 100%;
+  width: 15%;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  left: 0;
+  overflow-x: hidden;
+  padding-top: calc(4em - 6px);
+  border-right: 1px solid var(--primary);
+}
+
+.sidenav ul {
+  margin: 0 auto;
+}
+
+.sidenav ul li {
+  padding: 6px 8px 6px 16px;
+  text-decoration: none;
+  font-size: 1em;
+  color: var(--minimal);
+  display: block;
+}
+
+@media only screen and (max-width: 768px) {
+  /* For mobile phones: */
+  .app-container {
+    margin: 50% auto;
+  }
+
+  .sidenav, .secondary-stats, .barchart-container {
+    display: none;
+  }
+}

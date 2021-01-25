@@ -2,6 +2,8 @@ import { useEffect, useState, useRef } from 'react';
 import './App.css';
 import IndoorTemp from './components/indoorTemp';
 import ThermostatSwitch from './components/thermostatSwitch';
+import BarChart from './components/barchart';
+import Humidity from './components/humidity';
 
 function App() {
   // Sensors
@@ -25,6 +27,7 @@ function App() {
     prepare();
   }, []);
 
+  // Register Thermostat
   const registerApp = async () => {
     if (localStorage.getItem('uid') === null) {
       
@@ -44,6 +47,7 @@ function App() {
     }
   }
 
+  // Fetch Data
   const fetchSensors = async () => {
     const sensorUrl = 'http://api-staging.paritygo.com/sensors/api/sensors/';
     
@@ -52,17 +56,15 @@ function App() {
         method: 'GET',
       });
       const data = await response.json();
-      console.log('Success:', data);
-      
+
       setHumiditySensor(data[0]);
       setTemperatureSensor(data[1]);
       setOutdoorSensor(data[2]);
-      console.log(data[2]);
-      console.log(outdoorSensor);
+
       switchRef.current.fetchOutdoorTemp();
 
-        //fetchTemperature
-      if (data[1] !== undefined && Object.keys(data[1]).length !== 0) {
+      //fetchTemperature
+      if (data[1] !== {} && Object.keys(data[1]).length !== 0) {
         console.log(data[1], 'sensor');
         if (currentTemp == 0) {
           await fetchTemperature(data[1]);
@@ -90,7 +92,6 @@ function App() {
               method: 'GET',
           });
           const data = await response.json();
-          console.log(data.data_points);
 
           if (data.data_points && data.data_points.length >= 3) {
               const len = data.data_points.length;
@@ -101,13 +102,13 @@ function App() {
               }
               
               const startTemp = Math.round((sum/ len)* 10) / 10;
-              console.log(startTemp);
+
               setCurrentTemp(startTemp);
           } else {
               console.error("There's a missing data point for the current temperature.");
 
               // use latest data point as replacement
-              setCurrentTemp(sensorData.latest_value);
+              setCurrentTemp(Math.round(sensorData.latest_value* 10) / 10);
             }
           } catch (error) {
               console.error('Error:', error);
@@ -115,17 +116,13 @@ function App() {
     }
   }
 
+  // Handle Callbacks
   const switchRef = useRef();
   const indoorTempCallback = (autoStatus, desiredTemp) => {
 
     setAutoON(autoStatus);
     setDesiredTemp(desiredTemp);
-    
-    // get most recent current temperature
-    // const newCurrentTemp = await fetchTemperature(temperatureSensor);
 
-    console.log(autoStatus, "manualParent");
-    console.log(desiredTemp, "desiredTemp");
   }
 
   const switchCallback = (newState) => {
@@ -134,12 +131,37 @@ function App() {
 
   
   return (
-    <div className="App app-container">
-      <div className="main-container">
-        <h2 className="main-heading">Unit #100</h2>
-        <div className="temp-container"> 
-            <IndoorTemp parentCallback={indoorTempCallback} currentTemp={currentTemp} displaySymbol={temperatureSensor.display_symbol} thermostatState={thermostatState}/>
-            <ThermostatSwitch ref={switchRef} parentCallback={switchCallback} currentTemp={currentTemp} desiredTemp={desiredTemp} autoStatus={autoON} outdoorSensor={outdoorSensor}/>
+    <div className="App">
+      <div className="app-container">
+        <div className="sidenav">
+          
+          <ul>
+            <li><h3>Units</h3></li>
+            <li>Unit #100</li>
+            <li>Unit #200</li>
+            <li>Unit #300</li>
+          </ul>
+        </div>
+        <div className="row">
+          <div className="main-container">
+            <div className="container-center">
+              <h2 className="main-heading">Unit #100</h2>
+            </div>
+            <div className="temp-container"> 
+                <IndoorTemp parentCallback={indoorTempCallback} currentTemp={currentTemp} displaySymbol={temperatureSensor.display_symbol} thermostatState={thermostatState}/>
+                <ThermostatSwitch ref={switchRef} parentCallback={switchCallback} currentTemp={currentTemp} desiredTemp={desiredTemp} autoStatus={autoON} outdoorSensor={outdoorSensor}/>
+            </div>
+          </div>
+          <div className="secondary-stats">
+            <h5>Full Version</h5>
+            <div className="stats-display">
+              <Humidity sensor={humiditySensor} sensorType={"Humidity"}/>
+              <Humidity sensor={outdoorSensor} sensorType={"Outdoor"}/>
+            </div>
+          </div>
+        </div>
+        <div className="barchart-container container-center">
+          <BarChart />
         </div>
       </div>
     </div>

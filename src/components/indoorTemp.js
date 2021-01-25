@@ -5,11 +5,10 @@ function IndoorTemp ({ parentCallback, currentTemp, displaySymbol, thermostatSta
 
     useEffect(() => {
         setDesiredTemp(currentTemp);
-        console.log(currentTemp, "currentTemp");
-        console.log(desiredTemp, "desiredTemp");
     }, [currentTemp]);
 
     // handle Desired Temperatues
+
     function handleIncrement() {
         const dT = desiredTemp+0.5;
         setDesiredTemp(dT);
