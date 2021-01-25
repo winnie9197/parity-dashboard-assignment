@@ -1,11 +1,11 @@
 import { useEffect, useState, useRef } from 'react';
 
+
+// This component is not used in this design
 function Humidity ({ sensor, sensorType }) {
     const [ startHumidity, setStartHumidity ] = useState(0);
     
     const fetchHumidity = (sensorData) => {
-        console.log(sensorData);
-
         const endDate = new Date();
         const startDate = new Date(endDate);
         startDate.setMinutes(endDate.getMinutes() - 15);
@@ -19,7 +19,6 @@ function Humidity ({ sensor, sensorType }) {
                 method: 'GET',
             }).then(response => response.json())
             .then(d => {
-                // console.log(d.data_points, 'humidity');
 
                 if (d.data_points && d.data_points.length >= 3) {
                     const len = d.data_points.length;
@@ -48,7 +47,6 @@ function Humidity ({ sensor, sensorType }) {
             mounted.current = true;
         } else {
             // do componentDidUpdate logic
-            console.log(sensor,'sensor');
             if (sensor !== undefined && Object.keys(sensor).length !== 0)
                 console.log(sensor,'sensor');
                 fetchHumidity(sensor);

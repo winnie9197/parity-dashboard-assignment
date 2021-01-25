@@ -52,13 +52,11 @@ function App() {
         method: 'GET',
       });
       const data = await response.json();
-      console.log('Success:', data);
       
       setHumiditySensor(data[0]);
       setTemperatureSensor(data[1]);
       setOutdoorSensor(data[2]);
-      console.log(data[2]);
-      console.log(outdoorSensor);
+
       switchRef.current.fetchOutdoorTemp();
 
         //fetchTemperature
@@ -90,7 +88,6 @@ function App() {
               method: 'GET',
           });
           const data = await response.json();
-          console.log(data.data_points);
 
           if (data.data_points && data.data_points.length >= 3) {
               const len = data.data_points.length;
@@ -101,7 +98,6 @@ function App() {
               }
               
               const startTemp = Math.round((sum/ len)* 10) / 10;
-              console.log(startTemp);
               setCurrentTemp(startTemp);
           } else {
               console.error("There's a missing data point for the current temperature.");
@@ -121,11 +117,6 @@ function App() {
     setAutoON(autoStatus);
     setDesiredTemp(desiredTemp);
     
-    // get most recent current temperature
-    // const newCurrentTemp = await fetchTemperature(temperatureSensor);
-
-    console.log(autoStatus, "manualParent");
-    console.log(desiredTemp, "desiredTemp");
   }
 
   const switchCallback = (newState) => {

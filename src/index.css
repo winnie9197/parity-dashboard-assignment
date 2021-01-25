@@ -80,14 +80,6 @@ h5 {
 }
 
 /* App Layout */
-.app-container {
-  /* display: flex;
-  justify-content: center;
-  align-items: center; */
-
-  position: relative
-}
-
 .main-container {
   display: flex;
   flex-direction: column;
