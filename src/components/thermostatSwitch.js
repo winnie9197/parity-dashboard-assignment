@@ -1,41 +1,36 @@
 import { useEffect, useState, useImperativeHandle, forwardRef } from "react";
 
-const ThermostatSwitch = forwardRef(({ parentCallback, currentTemp, desiredTemp, outdoorTemp }, ref) => {
+const ThermostatSwitch = forwardRef(({ parentCallback, currentTemp, desiredTemp, outdoorSensor, autoStatus}, ref) => {
     const [ thermostatON, setThermostatON ] = useState(false);
     const [ autoON, setAutoON ] = useState(false);  //only checked with heating and cooling to represent states
     const [ heatON, setHeatON ] = useState(false);
     const [ coolON, setCoolON ] = useState(false);
 
-    
+    const [ outdoorTemp, setOutdoorTemp ] = useState(0);
 
     const uid = localStorage.getItem('uid');
     const thermostatUrl = `https://api-staging.paritygo.com/sensors/api/thermostat/${uid}/`;
 
     useEffect(() => {
-        //add a listener to autoStatus
-
         getStatus(); 
     }, []);
 
+    useEffect(() => {
+        setAutoON(autoStatus);
+        handleAuto(true);
+    }, [autoStatus, desiredTemp]);
 
     // Handle Click events
     useImperativeHandle(ref, () => ({
 
-        handleAuto() {
-            handleAuto();
+        fetchOutdoorTemp() {
+            fetchOutdoorTemp();
         }
 
-        // fetchOutdoorTemp() {
-        //     fetchOutdoorTemp();
-        // }
-    
     }));
 
-    const handleAuto = async () => {
-        const newStatus = !autoON;
-
+    const handleAuto = async (newStatus) => {
         var newState = "";
-    
         if (newStatus === false) {
             // if auto is off
             if (heatON) {
@@ -141,6 +136,8 @@ const ThermostatSwitch = forwardRef(({ parentCallback, currentTemp, desiredTemp,
                 await handleManual(handleHeat,'heat');
                 break;
             case "cool":
+                console.log(outdoorSensor);
+                await fetchOutdoorTemp(outdoorSensor);
                 console.log(outdoorTemp, "outdoorTemp");
                 await handleManual(handleCool,'cool');
                 break;
@@ -148,7 +145,12 @@ const ThermostatSwitch = forwardRef(({ parentCallback, currentTemp, desiredTemp,
                 await handleThermostat();
                 break;
             case "auto":
-                await handleAuto();
+                var newStatus;
+                if (!autoStatus)
+                    newStatus = !autoON;
+                else 
+                    newStatus = true;
+                await handleAuto(newStatus);
                 break;
             default:
                 console.error("Something's not right");
@@ -234,6 +236,47 @@ const ThermostatSwitch = forwardRef(({ parentCallback, currentTemp, desiredTemp,
         };
     }
 
+    const fetchOutdoorTemp = async (sensorData) => {
+        console.log(sensorData);
+
+        const endDate = new Date();
+        const startDate = new Date(endDate);
+        startDate.setMinutes(endDate.getMinutes() - 15);
+
+        if (sensorData !== undefined) {
+            const sensorSlug = sensorData.slug;
+            console.log("hey it works");
+
+            const outdoorTempUrl = `http://api-staging.paritygo.com/sensors/api/sensors/${sensorSlug}/?begin=${startDate.toISOString()}&end=${endDate.toISOString()}`;
+
+            try {
+                const response = await fetch(outdoorTempUrl, {
+                method: 'GET',
+            });
+                const data = await response.json();
+
+                if (data.data_points && data.data_points.length >= 3) {
+                    const len = data.data_points.length;
+
+                    var sum = 0;
+
+                    for (var i=0; i<len; i++) {
+                        sum += parseFloat(data.data_points[i].value);
+                    }
+
+                    const newTemp = Math.round((sum/ len)* 10) / 10;
+                    setOutdoorTemp(newTemp);
+                } else {
+                    console.error("There's a missing data point for the current outdoor temperature.");
+
+                    setOutdoorTemp(sensorData.latest_value);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            };
+        }
+    }
+
     // Render component
     const renderAuto = () => {
         const displayColor = autoON ? "#16bcc8" : "#BCBCBC";
@@ -262,7 +305,7 @@ const ThermostatSwitch = forwardRef(({ parentCallback, currentTemp, desiredTemp,
         <div className="container-center">
             <div className="switches">
                 <button onClick={() => handleSwitch("thermostat")}>{renderThermostatSwitch()}</button>
-                <button onClick={() => handleSwitch("auto")}>{renderAuto()}</button>
+                <button disabled={true}>{renderAuto()}</button>
                 <div className="inline-switches">
                     <button onClick={() => handleSwitch("heat")}>{renderHeat()}</button>/
                     <button onClick={() => handleSwitch("cool")}>{renderCool()}</button>
