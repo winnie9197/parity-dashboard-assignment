@@ -1,12 +1,12 @@
 import { useEffect, useState, useImperativeHandle, forwardRef } from "react";
 
-const ThermostatSwitch = forwardRef(({ parentCallback, currentTemp, desiredTemp, outdoorSensor}, ref) => {
+const ThermostatSwitch = forwardRef(({ parentCallback, currentTemp, desiredTemp, outdoorTemp }, ref) => {
     const [ thermostatON, setThermostatON ] = useState(false);
     const [ autoON, setAutoON ] = useState(false);  //only checked with heating and cooling to represent states
     const [ heatON, setHeatON ] = useState(false);
     const [ coolON, setCoolON ] = useState(false);
 
-    const [ outdoorTemp, setOutdoorTemp ] = useState(0);
+    
 
     const uid = localStorage.getItem('uid');
     const thermostatUrl = `https://api-staging.paritygo.com/sensors/api/thermostat/${uid}/`;
@@ -14,9 +14,9 @@ const ThermostatSwitch = forwardRef(({ parentCallback, currentTemp, desiredTemp,
     useEffect(() => {
         //add a listener to autoStatus
 
-        getStatus();
-        fetchOutdoorTemp(outdoorSensor);
+        getStatus(); 
     }, []);
+
 
     // Handle Click events
     useImperativeHandle(ref, () => ({
@@ -24,10 +24,14 @@ const ThermostatSwitch = forwardRef(({ parentCallback, currentTemp, desiredTemp,
         handleAuto() {
             handleAuto();
         }
+
+        // fetchOutdoorTemp() {
+        //     fetchOutdoorTemp();
+        // }
     
     }));
 
-    const handleAuto = () => {
+    const handleAuto = async () => {
         const newStatus = !autoON;
 
         var newState = "";
@@ -63,7 +67,7 @@ const ThermostatSwitch = forwardRef(({ parentCallback, currentTemp, desiredTemp,
                 newState = 'auto_standby';
             }
 
-            changeStatus(newState);
+            await changeStatus(newState);
         }
         setAutoON(newStatus);
     }
@@ -94,9 +98,9 @@ const ThermostatSwitch = forwardRef(({ parentCallback, currentTemp, desiredTemp,
         setAutoON(false);
     }
 
-    const handleHeat = (newState) => {
+    const handleHeat = async (newState) => {
         //persist changes
-        changeStatus(newState);
+        await changeStatus(newState);
 
         // if heat turns on, auto turns off
         // if heat turns off, if auto is on then let auto function handle it
@@ -112,10 +116,11 @@ const ThermostatSwitch = forwardRef(({ parentCallback, currentTemp, desiredTemp,
     }
 
     const handleCool = async (newState) => {
+        console.log(outdoorTemp);
         if (outdoorTemp >= 0) {
             //persist changes
-            changeStatus(newState);
-
+            await changeStatus(newState);
+            console.log("it's not freezing outside");
             //change component states
             const newStatus = !coolON;
 
@@ -136,6 +141,7 @@ const ThermostatSwitch = forwardRef(({ parentCallback, currentTemp, desiredTemp,
                 await handleManual(handleHeat,'heat');
                 break;
             case "cool":
+                console.log(outdoorTemp, "outdoorTemp");
                 await handleManual(handleCool,'cool');
                 break;
             case "thermostat":
@@ -147,7 +153,6 @@ const ThermostatSwitch = forwardRef(({ parentCallback, currentTemp, desiredTemp,
             default:
                 console.error("Something's not right");
         }
-        // getStatus();
     }
 
 
@@ -155,29 +160,29 @@ const ThermostatSwitch = forwardRef(({ parentCallback, currentTemp, desiredTemp,
 
     const changeStatus = async (newState) => {
         console.log(newState, "this is new state");
-        await fetch(thermostatUrl, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify( { "state": newState } ),
-          }).then(response => response.json())
-          .then(data => {
-              console.log('New status', data);
-              
-              console.log(data.state);
-
-              parentCallback(data.state);
-          }).catch(error => {
+        try {
+            const response = await fetch(thermostatUrl, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify( { "state": newState } ),
+            });
+            const data = await response.json();
+            console.log('New status', data);
+            parentCallback(data.state);
+          } catch (error) {
             console.error('Error:', error);
-          });
+          };
     }
 
     const getStatus = async () => {
-        await fetch(thermostatUrl, {
-          method: 'GET',
-        }).then(response => response.json())
-        .then(data => {
+        try {
+            const response = await fetch(thermostatUrl, {
+            method: 'GET',
+            });
+            const data = await response.json();
+        
             console.log('Init Status:', data);
 
             // initialize states by "switch" block to save states separately
@@ -224,49 +229,9 @@ const ThermostatSwitch = forwardRef(({ parentCallback, currentTemp, desiredTemp,
 
             parentCallback(data.state);
             console.log(data.state, "new status");
-
-        }).catch(error => {
+        } catch (error){
           console.error('Error:', error);
-        });
-    }
-
-    const fetchOutdoorTemp = (sensorData) => {
-        console.log(sensorData);
-
-        const endDate = new Date();
-        const startDate = new Date(endDate);
-        startDate.setMinutes(endDate.getMinutes() - 15);
-
-        if (sensorData !== undefined) {
-            const sensorSlug = sensorData.slug;
-
-            const outdoorTempUrl = `http://api-staging.paritygo.com/sensors/api/sensors/${sensorSlug}/?begin=${startDate.toISOString()}&end=${endDate.toISOString()}`;
-
-            fetch(outdoorTempUrl, {
-                method: 'GET',
-            }).then(response => response.json())
-            .then(d => {
-
-                if (d.data_points && d.data_points.length >= 3) {
-                    const len = d.data_points.length;
-
-                    var sum = 0;
-
-                    for (var i=0; i<len; i++) {
-                        sum += parseFloat(d.data_points[i].value);
-                    }
-
-                    const outdoorTemp = Math.round((sum/ len)* 10) / 10;
-                    setOutdoorTemp(outdoorTemp);
-                } else {
-                    console.error("There's a missing data point for the current outdoor temperature.");
-
-                    setOutdoorTemp(sensorData.latest_value);
-                }
-            }).catch(error => {
-                console.error('Error:', error);
-            });
-        }
+        };
     }
 
     // Render component

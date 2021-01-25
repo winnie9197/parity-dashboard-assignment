@@ -9,9 +9,6 @@ function IndoorTemp ({ parentCallback, currentTemp, displaySymbol, autoStatus, t
         console.log(desiredTemp, "desiredTemp");
     }, [currentTemp]);
 
-    // useEffect(() => {
-    // }, []);
-
     // handle Desired Temperatues
     function handleIncrement() {
         setDesiredTemp(desiredTemp+0.5);
