@@ -1,89 +1,41 @@
 import { useEffect, useState, useRef } from 'react';
 
-function IndoorTemp ({ sensor }) {
-    const [ startTemp, setStartTemp ] = useState(0);
-    const [ manual, setManual ] = useState(false);
-
-    const fetchTemperature = (sensorData) => {
-        console.log(sensorData, "temp");
-        const endDate = new Date();
-        const startDate = new Date(endDate);
-        startDate.setMinutes(endDate.getMinutes() - 15);
-
-        if (sensorData !== undefined) {
-            const sensorSlug = sensorData.slug;
-
-            const temperatureUrl = `http://api-staging.paritygo.com/sensors/api/sensors/${sensorSlug}/?begin=${startDate.toISOString()}&end=${endDate.toISOString()}`;
-
-            fetch(temperatureUrl, {
-                method: 'GET',
-            }).then(response => response.json())
-            .then(d => {
-                console.log(d.data_points);
-
-                if (d.data_points && d.data_points.length >= 3) {
-                    const len = d.data_points.length;
-
-                    var sum = 0;
-
-                    for (var i=0; i<len; i++) {
-                        sum += parseFloat(d.data_points[i].value);
-                    }
-                    
-                    const currentTemp = Math.round((sum/ len)* 10) / 10;
-                    console.log(currentTemp);
-                    setStartTemp(currentTemp);
-                    setManual(false);
-                } else {
-                    console.error("There's a missing data point for the current temperature.");
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-        }
-    }
-
-    const mounted = useRef();
-    useEffect(() => {
-        if (!mounted.current) {
-            // do componentDidMount logic
-            mounted.current = true;
-        } else {
-            // do componentDidUpdate logic
-            console.log(sensor, 'sensor');
-            if (sensor !== undefined && Object.keys(sensor).length !== 0) {
-                console.log(sensor, 'sensor');
-                if (!manual)
-                    fetchTemperature(sensor);
-            }
-        }
-    });
+function IndoorTemp ({ parentCallback, currentTemp, displaySymbol, autoStatus, thermostatState }) {
+    const [ desiredTemp, setDesiredTemp ] = useState(0);
 
     useEffect(() => {
-    }, [sensor]);
+        setDesiredTemp(currentTemp);
+        console.log(currentTemp, "currentTemp");
+        console.log(desiredTemp, "desiredTemp");
+    }, [currentTemp]);
 
+    // useEffect(() => {
+    // }, []);
+
+    // handle Desired Temperatues
     function handleIncrement() {
-        setStartTemp(startTemp+0.5);
-        setManual(true);
+        setDesiredTemp(desiredTemp+0.5);
         // update actual thermometer
+        parentCallback(true, desiredTemp);
     }
 
     function handleDecrement() {
-        setStartTemp(startTemp-0.5);
-        setManual(true);
+        setDesiredTemp(desiredTemp-0.5);
         // update actual thermometer
+        parentCallback(true, desiredTemp);
     }
 
     return (
         <div className="container-center">
             <h4 className="title">Indoor Temperature</h4>
-            <h5 className="status">{}STATUS</h5>
+            <h5 className="status">{thermostatState.toUpperCase()}</h5>
             <div className="indoor-temp">
-                <h1 className="start-temp">{startTemp}{sensor!==undefined ? sensor.display_symbol : "°C"}</h1>
+                
+                {/* // Temperature values are rounded to the nears .5 */}
+                <h1 className="start-temp">{Math.round(desiredTemp*2)/2}{displaySymbol!==undefined ? displaySymbol : "°C"}</h1>
                 <div className="temp-buttons">
-                    <button className="square" onClick={handleIncrement}>+<sub>0.5</sub></button>
-                    <button className="square" onClick={handleDecrement}>-<sub>0.5</sub></button>
+                    <button className="square" onClick={e => handleIncrement()}>+<sub>0.5</sub></button>
+                    <button className="square" onClick={e => handleDecrement()}>-<sub>0.5</sub></button>
                 </div>
                 
             </div>

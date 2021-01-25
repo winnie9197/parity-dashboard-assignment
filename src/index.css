@@ -1,9 +1,9 @@
 :root {
   --primary: #16bcc8;
-  --minimal: #BCBCBC;
+  --minimal: #939393;
   --light: #EEEEEE;
-
   --classic: #505050;
+  --secondary: #FF8E2E;
 }
 
 body > #root > div {
@@ -102,6 +102,7 @@ h5 {
 
 .main-heading {
   margin: 0 auto;
+  color: var(--minimal);
 }
 
 /* Main Layout */
@@ -125,6 +126,7 @@ h5 {
   padding-left: 3em;
   grid-area: status;
   display: inline;
+  color: var(--secondary);
 }
 
 .indoor-temp {
@@ -170,6 +172,7 @@ h5 {
 .switches {
   margin-top: 1.25em;
   grid-area: buttons;
+  color: var(--minimal);
 }
 .switches > *:not(:first-child) {
   padding-left: 2em;
